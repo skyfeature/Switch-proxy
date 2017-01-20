@@ -1,0 +1,27 @@
+#!/bin/bash
+#when to use test command
+#when to use $
+# automatically change system proxy setting based on active connection. Add more elif as required.
+if (nmcli connection show --active | grep IITD_LAN); then
+	echo "Setting auto proxy.dual for IITD_LAN"
+	gsettings set org.gnome.system.proxy mode 'auto'
+	gsettings set org.gnome.system.proxy autoconfig-url http://www.cc.iitd.ac.in/cgi-bin/proxy.dual
+	echo "Terminal proxy is set"
+	./.proxy.sh
+	export http_proxy=http://proxy62.iitd.ernet.in:3128/
+	export https_proxy=https://proxy62.iitd.ernet.in:3128/
+	export ftp_proxy=ftp://proxy62.iitd.ernet.in:3128/
+	export socks_proxy=socks://proxy62.iitd.ernet.in:3128/
+elif (nmcli connection show --active | grep buddhahaha); then
+	echo "Setting no proxy for buddhahaha"
+	gsettings set org.gnome.system.proxy mode 'none'
+	unset http_proxy
+	unset https_proxy
+	unset ftp_proxy
+	unset socks_proxy
+	echo "Environment proxy removed for this terminal only"
+else
+	echo "Setting auto proxy.dual for Unknown connection"
+	gsettings set org.gnome.system.proxy mode 'auto'
+	gsettings set org.gnome.system.proxy autoconfig-url http://www.cc.iitd.ac.in/cgi-bin/proxy.dual
+fi
